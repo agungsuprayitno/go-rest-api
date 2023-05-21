@@ -25,4 +25,5 @@ func (prc *PostRouteController) PostRoute(rg *gin.RouterGroup) {
 	router.POST("/", prc.postController.Create)
 	router.PUT("/:postId", prc.postController.Update)
 	router.DELETE("/:postId", prc.postController.Delete)
+	router.POST("/kafka-post", prc.postController.AsynchronousInsert)
 }

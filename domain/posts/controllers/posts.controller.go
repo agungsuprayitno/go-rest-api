@@ -1,8 +1,13 @@
 package controllers
 
 import (
+	"context"
+	"fmt"
 	"go-rest-postgres/domain/posts/responses"
 	"go-rest-postgres/domain/posts/services"
+	"go-rest-postgres/kafka/config"
+	"go-rest-postgres/kafka/producer"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -64,4 +69,40 @@ func (pc PostController) Delete(ctx *gin.Context) {
 	if err == nil {
 		ctx.JSON(http.StatusOK, gin.H{"data": mappedResponse})
 	}
+}
+
+func (pc PostController) AsynchronousInsert(ctx *gin.Context) {
+
+	kafkaProducer, err := config.Configure("quickstart-events")
+	if err != nil {
+		log.Fatalln("error", err.Error())
+		return
+	}
+	defer kafkaProducer.Close()
+
+	err = producer.PushMessage(context.Background(), nil, []byte("test producer"))
+	if err != nil {
+		ctx.JSON(http.StatusUnprocessableEntity, map[string]interface{}{
+			"error": map[string]interface{}{
+				"message": fmt.Sprintf("error while push message into kafka: %s", err.Error()),
+			},
+		})
+
+		ctx.Abort()
+		return
+	}
+
+	ctx.JSON(http.StatusOK, map[string]interface{}{
+		"success": true,
+		"message": "success push data into kafka",
+		"data":    "test producer",
+	})
+
+
+	// deletedPost, err := services.Delete(ctx)
+	// response := responses.PostResponse{}
+	// mappedResponse := response.MapResponse(deletedPost)
+	// if err == nil {
+	// 	ctx.JSON(http.StatusOK, gin.H{"data": mappedResponse})
+	// }
 }
