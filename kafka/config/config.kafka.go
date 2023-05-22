@@ -1,8 +1,6 @@
 package config
 
 import (
-	"flag"
-	"strings"
 	"time"
 
 	"github.com/segmentio/kafka-go"
@@ -18,18 +16,12 @@ var (
 )
 
 func Configure(topic string) (w *kafka.Writer, err error) {
-	flag.StringVar(&kafkaBrokerUrl, "kafka-brokers", "localhost:9092", "Kafka brokers in comma separated value")
-	flag.BoolVar(&kafkaVerbose, "kafka-verbose", true, "Kafka verbose logging")
-	flag.StringVar(&kafkaClientId, "kafka-client-id", "my-kafka-client", "Kafka client id to connect")
 
 	dialer := &kafka.Dialer{
 		Timeout:  10 * time.Second,
-		ClientID: kafkaClientId,
 	}
 
-	var kafkaBrokerUrls []string
-
-	kafkaBrokerUrls = strings.Split(kafkaBrokerUrl, ",")
+	kafkaBrokerUrls := []string{"localhost:9092"}
 	config := kafka.WriterConfig{
 		Brokers:          kafkaBrokerUrls,
 		Topic:            topic,
