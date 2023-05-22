@@ -4,34 +4,27 @@ import (
 	"time"
 
 	"github.com/segmentio/kafka-go"
-	"github.com/segmentio/kafka-go/snappy"
 )
 
-var Writer *kafka.Writer
+var Reader *kafka.Reader
 
-var (
-	kafkaBrokerUrl string
-	kafkaVerbose   bool
-	kafkaClientId  string
-)
-
-func Configure(topic string) (w *kafka.Writer, err error) {
+func Configure(topic string, groupId string) (kafkaReader *kafka.Reader, err error) {
 
 	dialer := &kafka.Dialer{
 		Timeout:  10 * time.Second,
 	}
 
 	kafkaBrokerUrls := []string{"localhost:9092"}
-	config := kafka.WriterConfig{
-		Brokers:          kafkaBrokerUrls,
-		Topic:            topic,
-		Balancer:         &kafka.LeastBytes{},
-		Dialer:           dialer,
-		WriteTimeout:     10 * time.Second,
-		ReadTimeout:      10 * time.Second,
-		CompressionCodec: snappy.NewCompressionCodec(),
+	config := kafka.ReaderConfig{
+		Brokers:			kafkaBrokerUrls,
+		Topic:				topic,
+		Dialer:				dialer,
+		GroupID:			groupId,
+		MinBytes:       	10e3,            // 10KB
+		MaxBytes:       	10e6,            // 10MB
+		MaxWait:        	1 * time.Second, // Maximum amount of time to wait for new data to come when fetching batches of messages from kafka.
+		ReadLagInterval: 	-1,
 	}
-	w = kafka.NewWriter(config)
-	Writer = w
-	return w, nil
+	kafkaReader = kafka.NewReader(config)
+	return kafkaReader, nil
 }
