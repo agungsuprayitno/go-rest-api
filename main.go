@@ -41,18 +41,7 @@ func main() {
 	log.Fatal(server.Run(":" + config.ServerPort))
 }
 
-type ProducerMessage struct {
-	Message     string    `json:"message"  binding:"required"`
-
-}
-
-
 func KafkaMessage(ctx *gin.Context) {
-	
-	// var producerRequest ProducerMessage
-	// ctx.BindJSON(&producerRequest)
-
-	// producerMessageJson, err := json.Marshal(producerRequest.Message)
 
 	// Parse JSON data from the request body
 	var jsonMessage map[string]interface{}
@@ -62,9 +51,9 @@ func KafkaMessage(ctx *gin.Context) {
 	}
 
 	// Convert JSON message to string
-	message := fmt.Sprintf("%v", jsonMessage)
+	stringMessage := fmt.Sprintf("%v", jsonMessage)
 
-	a, err := json.Marshal(message)
+	message, err := json.Marshal(stringMessage)
 
 	kafkaProducer, err := config.Configure("quickstart-events")
 	if err != nil {
@@ -73,7 +62,7 @@ func KafkaMessage(ctx *gin.Context) {
 	}
 	defer kafkaProducer.Close()
 
-	err = producer.PushMessage(context.Background(), nil, a)
+	err = producer.PushMessage(context.Background(), nil, message)
 	if err != nil {
 		ctx.JSON(http.StatusUnprocessableEntity, map[string]interface{}{
 			"error": map[string]interface{}{
@@ -88,7 +77,7 @@ func KafkaMessage(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, map[string]interface{}{
 		"success": true,
 		"message": "success push data into kafka",
-		"data":    "test producer",
+		"data":    stringMessage,
 	})
 }
 
