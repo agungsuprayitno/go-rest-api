@@ -148,35 +148,14 @@ Untuk menjalankan projek ini, gunakan command seperti berikut:
   go mod tidy
   ```
 
-- Buat file .env
+- Buat file .env dengan meng-copy file env.example 
 
   ```
   cp .env.example .env
   ```
 
-- Isi `ACCESS_TOKEN_PRIVATE_KEY`, `ACCESS_TOKEN_PUBLIC_KEY`, `REFRESH_TOKEN_PRIVATE_KEY`, `REFRESH_TOKEN_PUBLIC_KEY`,
-  dengan men-generate base64 encode public key.
-  contoh format:
-
-  ```
-  base64encode(
-    -----BEGIN PUBLIC KEY-----
-    AAAAB3NzaC1yc2EAAAADAQABAAABgQDe2EpJLmStfjGlLADR2Xndl5s9lcaxE6POWgecSL62JvTbWwVZVraukQDK/NHq7HZ9OhoH4ZqHD1C4gvZTyK+avB
-    -----END PUBLIC KEY-----)
-  ```
-
-  contoh hasil base64 encode :
-
-  ```
-  LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0KQUFBQUIzTnphQzF5YzJFQUFBQURBUUFCQUFBQmdRRGUyRXBKTG1TdGZqR2xMQURSMlhuZGw1czlsY2F4RTZQT1dnZWNTTDYySnZUYld3VlpWcmF1a1FESy9OSHE3SFo5T2hvSDRacUhEMUM0Z3ZaVHlLK2F2QgotLS0tLUVORCBQVUJMSUMgS0VZLS0tLS0=
-  ```
-
-- Run migrasi database
-
-  ```
-  go run migrate/migrate.go
-  ```
-
+- Isi `ACCESS_TOKEN_PRIVATE_KEY`, `ACCESS_TOKEN_PUBLIC_KEY`, `REFRESH_TOKEN_PRIVATE_KEY`, `REFRESH_TOKEN_PUBLIC_KEY`, dll.
+  
 - Run
 
   ```
